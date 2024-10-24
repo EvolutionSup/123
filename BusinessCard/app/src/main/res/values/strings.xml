@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Business Card</string>
+    <string name="user_name">Alexandr Vasilev</string>
+    <string name="occupation">student of group 4410</string>
+    <string name="phone" >+7 (965) 621 23 66</string>
+    <string name="email">avanothermail@gmail.com</string>
+</resources>
