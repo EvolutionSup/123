@@ -69,10 +69,10 @@ fun ArtSpace() {
         DisplayFooter(
             onAction = { action ->
                 when (action) {
-                    Action.Previous -> {
+                    Action.PREVIOUS -> {
                         imageId = if (imageId == 1) 3 else imageId - 1
                     }
-                    Action.Next -> {
+                    Action.NEXT -> {
                         imageId = if (imageId == 3) 1 else imageId + 1
                     }
                 }
@@ -82,7 +82,7 @@ fun ArtSpace() {
 }
 
 enum class Action {
-    Previous, Next
+    PREVIOUS, NEXT
 }
 
 @Composable
@@ -101,13 +101,13 @@ fun DisplayFooter(
         verticalAlignment  = Alignment.CenterVertically
     ) {
         androidx.compose.material3.Button(
-            onClick = { onAction(Action.Previous) },
+            onClick = { onAction(Action.PREVIOUS) },
             modifier = Modifier.padding(8.dp)
         ) {
             Text(text = "Previous")
         }
         androidx.compose.material3.Button(
-            onClick = { onAction(Action.Next) },
+            onClick = { onAction(Action.NEXT) },
             modifier = Modifier.padding(8.dp)
         ) {
             Text(text = "Next")
