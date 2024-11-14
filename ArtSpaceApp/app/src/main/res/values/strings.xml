@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ArtSpaceApp</string>
+    <string name="author">Ivan Ivanovich Shishkin</string>
+    <string name="year1">1889</string>
+    <string name="year2">1878</string>
+    <string name="year3">1891</string>
+    <string name="title1">Morning in a Pine Forest</string>
+    <string name="title2">Rye</string>
+    <string name="title3">Rain in an Oak Forest</string>
 </resources>

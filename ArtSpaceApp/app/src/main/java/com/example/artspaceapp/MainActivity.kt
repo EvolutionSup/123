@@ -4,95 +4,169 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.example.artspaceapp.ui.theme.ArtSpaceAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ArtSpaceApp()
+            ArtSpaceAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ArtSpace()
+                }
+            }
         }
     }
 }
 
 @Composable
-fun ArtSpaceApp() {
-    var currentArtwork by remember { mutableStateOf(0) }
-    val artworks = listOf(
-        Artwork("Title 1", "Artist 1", "Year 1", R.drawable.image1),
-        Artwork("Title 2", "Artist 2", "Year 2", R.drawable.image2),
-        Artwork("Title 3", "Artist 3", "Year 3", R.drawable.image3)
-    )
+fun ArtSpace() {
+    var imageId by remember { mutableStateOf(1) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ArtworkWall(artworks[currentArtwork].imageRes)
-        ArtworkDescriptor(artworks[currentArtwork].title, artworks[currentArtwork].artist, artworks[currentArtwork].year)
-        DisplayController(
-            onPrevious = { currentArtwork = (currentArtwork - 1 + artworks.size) % artworks.size },
-            onNext = { currentArtwork = (currentArtwork + 1) % artworks.size }
+        Text(
+            fontSize = 30.sp,
+            text = stringResource(R.string.author),
+            modifier = Modifier
+                .padding(10.dp)
+        )
+        DisplayArt(imageId)
+        DisplayInfo(imageId)
+        DisplayFooter(
+            onAction = { action ->
+                when (action) {
+                    Action.Previous -> {
+                        imageId = if (imageId == 1) 3 else imageId - 1
+                    }
+                    Action.Next -> {
+                        imageId = if (imageId == 3) 1 else imageId + 1
+                    }
+                }
+            }
         )
     }
 }
 
-@Composable
-fun ArtworkWall(imageRes: Int) {
-    Image(
-        painter = painterResource(id = imageRes),
-        contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp),
-        contentScale = ContentScale.Crop
-    )
+enum class Action {
+    Previous, Next
 }
 
 @Composable
-fun ArtworkDescriptor(title: String, artist: String, year: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp)
-    ) {
-        Text(text = "Title: $title", style = MaterialTheme.typography.titleMedium)
-        Text(text = "Artist: $artist", style = MaterialTheme.typography.bodyLarge)
-        Text(text = "Year: $year", style = MaterialTheme.typography.bodyLarge)
-    }
+fun DisplayArt(imageId: Int) {
+    val image = painterResource(id = getImage(imageId))
+    Image(painter = image, contentDescription = "")
 }
 
 @Composable
-fun DisplayController(onPrevious: () -> Unit, onNext: () -> Unit) {
+fun DisplayFooter(
+    onAction: (Action) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = modifier,
+        verticalAlignment  = Alignment.CenterVertically
     ) {
-        Button(onClick = onPrevious) {
-            Text("Previous")
+        androidx.compose.material3.Button(
+            onClick = { onAction(Action.Previous) },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = "Previous")
         }
-        Button(onClick = onNext) {
-            Text("Next")
+        androidx.compose.material3.Button(
+            onClick = { onAction(Action.Next) },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(text = "Next")
         }
     }
 }
 
-data class Artwork(val title: String, val artist: String, val year: String, val imageRes: Int)
+@Composable
+fun DisplayInfo(imageId: Int,modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement  = Arrangement.Center,
+        horizontalAlignment  = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+        Text(
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold,
+            text = stringResource(id = getTitle(imageId)),
+            modifier = modifier
+                .padding(10.dp)
+        )
+        Text(
+            text = stringResource(id = getYear(imageId)) ,
+            fontSize = 18.sp,
+            fontStyle = FontStyle.Italic,
+            modifier = modifier
+                .padding(bottom = 10.dp)
+        )
+    }
+}
+
+private fun getImage(imageId: Int):Int{
+    return when(imageId){
+        1 -> R.drawable.image1
+        2 -> R.drawable.image2
+        else -> R.drawable.image3
+    }
+}
+
+private fun getYear(imageId: Int):Int{
+    return when(imageId){
+        1 -> R.string.year1
+        2 -> R.string.year2
+        else -> R.string.year3
+    }
+}
+
+private fun getTitle(imageId: Int):Int{
+    return when(imageId){
+        1 -> R.string.title1
+        2 -> R.string.title2
+        else -> R.string.title3
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun ArtSpaceAppPreview() {
-    ArtSpaceApp()
+    ArtSpace()
 }
