@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.icons.filled.ExpandLess
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,18 +106,19 @@ fun DogItem(
                 Spacer(Modifier.weight(1f))
                 DogItemButton(
                     expanded = expanded,
-                    onClick = { /*TODO*/ },
+                    onClick = { expanded = !expanded }
                 )
             }
-            DogHobby(
-                dog.hobbies,
-                modifier = Modifier.padding(
-                    start = dimensionResource(R.dimen.padding_medium),
-                    top = dimensionResource(R.dimen.padding_small),
-                    end = dimensionResource(R.dimen.padding_medium),
-                    bottom = dimensionResource(R.dimen.padding_medium)
+            if (expanded) {
+                DogHobby(
+                    dog.hobbies, modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.padding_medium),
+                        top = dimensionResource(R.dimen.padding_small),
+                        end = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_medium)
+                    )
                 )
-            )
+            }
         }
     }
 }
@@ -132,7 +134,7 @@ private fun DogItemButton(
         modifier = modifier
     ){
         Icon(
-            imageVector = Icons.Filled.ExpandMore,
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
             contentDescription = stringResource(R.string.expand_button_content_description),
             tint = MaterialTheme.colorScheme.secondary
         )
